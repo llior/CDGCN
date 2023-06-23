@@ -60,7 +60,7 @@ Step2.2: Perform CDGCN
 Step2.3: Evaluate the result
 
 ```shell
-./cdgcn_run.sh --stage "Evaluation" -ref [Reference File Path]
+./cdgcn_run.sh --stage "Evaluation" --ref [Reference File Path]
 ```
 
 ### Train CDGCN (Optional)
