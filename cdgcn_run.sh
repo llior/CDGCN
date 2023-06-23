@@ -3,6 +3,7 @@
 ### [1]Train CDGCN model
 
 stage=''
+ref=''
 . ./parse_options.sh
 
 export PYTHONPATH=.
@@ -49,12 +50,12 @@ fi
 
 
 ### [3]CDGCN Graph-OSD
+FILE_LIST=xv_data/dihard_2020_dev.list
+exp_dir=xv_data/resnet34se/work_dir/cfg_cdgcn_vox2/Leiden_labels
+osd_rttm_dir=xv_data/osd/model/pyannote2.0/dev/rttm
+osd_dir=$exp_dir/overlap_aware
 if [ $stage == "Test_2nd" ]; then
 
-	FILE_LIST=xv_data/dihard_2020_dev.list
-	exp_dir=xv_data/resnet34se/work_dir/cfg_cdgcn_vox2/Leiden_labels
-	osd_rttm_dir=xv_data/osd/model/pyannote2.0/dev/rttm
-	osd_dir=$exp_dir/overlap_aware
 	rm -rf $osd_dir/osd
 	if [ ! -d $osd_dir/osd ]; then
 		mkdir -p $osd_dir/osd
@@ -77,12 +78,18 @@ if [ $stage == "Test_2nd" ]; then
 	python cdgcn/diar_ovl_assignment_ms.py  $osd_dir
 	cat $osd_dir/rttmsTwoSpk/* > $osd_dir/sysTwoSpk.rttm
 	sed -i 's/dihard_2020_dev_//' $osd_dir/sysTwoSpk.rttm 
+	
+fi
+
+if [ $stage == "Evaluation" ]; then
+
 	#calculate DER
 	if [ ! -d $osd_dir/result ];then
 		 mkdir -p $osd_dir/result
 	fi
 	sys=$osd_dir/sysTwoSpk.rttm
 
-	diarization/md-eval.pl -r xv_data/ref_dev.rttm -s $sys 
+	diarization/md-eval.pl -r $ref -s $sys 
 	
 fi
+
